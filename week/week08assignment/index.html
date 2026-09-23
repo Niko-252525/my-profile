@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チームメンバー一覧</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 min-h-screen p-6">
+
+    <main class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-slate-800 mb-8">チームメンバー一覧</h1>
+
+        <div id="member-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
+
+    <script>
+        // メンバーデータの定義
+        const members = [
+            { name: "佐藤 健", role: "フロントエンド", comment: "ReactとTypeScriptが得意です。" },
+            { name: "鈴木 はな", role: "デザイナー", comment: "FigmaでUIデザインを担当します。" },
+            { name: "高橋 誠", role: "バックエンド", comment: "Go言語でのAPI開発が専門です。" },
+            { name: "伊藤 玲", role: "PM", comment: "チームのスケジュール管理を徹底します。" },
+            { name: "渡辺 翔", role: "インフラ", comment: "AWSの設計・構築を主に担当します。" }
+        ];
+
+        const container = document.getElementById("member-container");
+
+        // forEachでカードを動的に生成
+        members.forEach((member) => {
+            const card = document.createElement("div");
+            card.className = "bg-white p-6 rounded-2xl shadow-sm border border-slate-100";
+
+            card.innerHTML = `
+        <h2 class="text-xl font-bold text-slate-800">${member.name}</h2>
+        <p class="text-blue-600 font-medium text-sm mt-1">${member.role}</p>
+        <p class="text-slate-600 mt-4 text-sm leading-relaxed">${member.comment}</p>
+      `;
+
+            container.appendChild(card);
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+実装の説明
+配列・オブジェクトの構造: 各メンバーの情報をプロパティ（name, role, comment）として持つオブジェクトを定義し、それらを配列に格納しました。データ構造を整理することで、管理と拡張が容易になりました。
+
+forEachによるDOM生成: 配列の要素をループ処理し、各要素に対して createElement でHTML構造を生成しました。これにより、メンバーが増えてもHTMLを直接編集することなく、JSのデータ変更のみで自動的に画面に反映される仕組みにしました。
+
+DOMへの反映: innerHTML を用いて、テンプレートリテラルで各メンバーの情報をHTMLに展開しました。最後に appendChild で親要素に追加することで、ページにメンバーカードを表示しました。
+
+詰まった場所と解決策
+詰まった場所: 配列の中のオブジェクトにアクセスする際、テンプレートリテラル内での変数の展開方法（${} の使い方）が少し混乱しました。
+
+解決策: サンプルコードを見直し、${member.name} のように、テンプレートリテラルの中で正確にプロパティを指定することで解決しました。
+
+判断の記録
+選択肢A: データの並び順を「追加した順」にする
+
+選択肢B: データの並び順を「名前順」にする
+
+採用した理由: チームの編成を表示する際、入社順やチームへの追加順の方が文脈として自然であると考え、選択肢Aを採用しました。
+
+確認方法: 画面を表示し、配列の定義順にカードが並んでいることを確認しました。
+
+AI利用
+AIツール: [使用したAIツール名（例: ChatGPT）]
+
+何を依頼したか: 実装コードの構成案の作成と、Tailwind CSSでの適切なクラス指定の確認。
+
+自分で修正した箇所: カードの余白調整や、フォントサイズ・色の細かな微調整。
+
+AIとの比較
+AIが正しく実装できていたこと: 基本的なJSのループ処理とDOM操作のロジック。
+
+AIが間違えた・足りなかったこと: スマホで見るとカードが縦に並びすぎるため、グリッドレイアウトのレスポンシブ指定（grid-cols-1 sm:grid-cols-2）を自分で追加する必要がありました。
+
+自分が修正・判断した箇所: レスポンシブ対応の調整。

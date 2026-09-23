@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー登録フォーム</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 flex items-center justify-center min-h-screen">
+    
+    <div class="w-full max-w-md bg-white rounded-xl border border-slate-200 shadow-sm p-8">
+        
+        <h1 class="text-2xl font-bold text-center mb-6">ユーザー登録</h1>
+
+        <form id="registerForm" novalidate>
+
+            <!-- 名前 -->
+            <div class="mb-4">
+                <label for="name" class="block font-medium mb-1">
+                    名前
+                </label>
+                <input type="text" id="name" required
+                    class="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="お名前を入力してください">
+            </div>
+
+            <!-- メールアドレス -->
+            <div class="mb-4">
+                <label for="email" class="block font-medium mb-1">
+                    メールアドレス
+                </label>
+                <input type="email" id="email" required
+                    class="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="example@example.com">
+            </div>
+
+            <!-- パスワード -->
+            <div class="mb-4">
+                <label for="password" class="block font-medium mb-1">
+                    パスワード
+                </label>
+                <input type="password" id="password" required
+                    class="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="8文字以上">
+            </div>
+
+            <!-- 確認用パスワード -->
+            <div class="mb-4">
+                <label for="confirmPassword" class="block font-medium mb-1">
+                    パスワード（確認）
+                </label>
+                <input type="password" id="confirmPassword" required
+                    class="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="もう一度パスワードを入力してください">
+            </div>
+
+            <!-- 利用規約 -->
+            <div class="mb-4">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" id="terms" required class="w-4 h-4">
+                    <span>利用規約に同意します</span>
+                </label>
+            </div>
+
+            <!-- メッセージ -->
+            <p id="result" class="text-center mb-4"></p>
+
+            <!-- 送信ボタン -->
+            <button type="submit"
+                class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700">
+                登録する
+            </button>
+
+        </form>
+    </div>
+
+    <script>
+        const form = document.querySelector("#registerForm");
+        const name = document.querySelector("#name");
+        const email = document.querySelector("#email");
+        const password = document.querySelector("#password");
+        const confirmPassword = document.querySelector("#confirmPassword");
+        const terms = document.querySelector("#terms");
+        const result = document.querySelector("#result");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            // 名前のチェック
+            if (name.value === "") {
+                result.textContent = "名前を入力してください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // メールアドレスのチェック
+            if (email.value === "") {
+                result.textContent = "メールアドレスを入力してください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // メールアドレスの形式チェック
+            if (!email.value.includes("@")) {
+                result.textContent = "@を含む正しいメールアドレスを入力してください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // パスワードのチェック
+            if (password.value === "") {
+                result.textContent = "パスワードを入力してください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // パスワードの文字数チェック
+            if (password.value.length < 8) {
+                result.textContent = "パスワードは8文字以上にしてください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // 確認用パスワードのチェック
+            if (confirmPassword.value === "") {
+                result.textContent = "確認用パスワードを入力してください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // パスワードの一致チェック
+            if (password.value !== confirmPassword.value) {
+                result.textContent = "パスワードが一致しません";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // 利用規約のチェック
+            if (!terms.checked) {
+                result.textContent = "利用規約に同意してください";
+                result.className = "text-center mb-4 text-red-500";
+                return;
+            }
+
+            // 全てのチェックに成功
+            result.textContent = "登録完了！";
+            result.className = "text-center mb-4 text-green-600";
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI計算ツール</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6">
+            BMI計算ツール
+        </h1>
+
+        <div class="mb-4">
+            <label for="height" class="block mb-2 font-semibold">
+                身長（cm）
+            </label>
+            <input type="number" id="height" class="w-full border rounded p-2" placeholder="170">
+        </div>
+
+        <div class="mb-4">
+            <label for="weight" class="block mb-2 font-semibold">
+                体重（kg）
+            </label>
+            <input type="number" id="weight" class="w-full border rounded p-2" placeholder="60">
+        </div>
+
+        <button id="calcBtn" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+            計算する
+        </button>
+
+        <div id="result" class="mt-6 text-center text-lg font-semibold">
+        </div>
+    </div>
+
+    <script>
+        const heightInput = document.querySelector("#height");
+        const weightInput = document.querySelector("#weight");
+        const calcBtn = document.querySelector("#calcBtn");
+        const result = document.querySelector("#result");
+
+        calcBtn.addEventListener("click", () => {
+
+            const height = Number(heightInput.value);
+            const weight = Number(weightInput.value);
+
+            if (height <= 0 || weight <= 0) {
+                result.textContent =
+                    "身長(cm)と体重(kg)に0より大きい数値を入力してください。";
+                return;
+            }
+
+            const heightM = height / 100;
+
+            const bmi = weight / (heightM * heightM);
+
+            let judgement = "";
+
+            if (bmi < 18.5) {
+                judgement = "痩せ型";
+            } else if (bmi < 25) {
+                judgement = "普通";
+            } else {
+                judgement = "肥満";
+            }
+
+            result.textContent =
+                `BMI：${bmi.toFixed(1)} (${judgement})`;
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+
+計算処理の流れ
+「計算する」ボタンがクリックされると、まず身長と体重の入力値を取得します。Number()で数値型に変換した後、入力値が0以下でないかを確認し、不正な値の場合はエラーメッセージを表示して処理を中断します。正常な値であれば、身長をセンチメートルからメートルに換算して計算式に代入し、得られたBMI数値に基づいてif/else文で「痩せ型」「普通」「肥満」の判定を行い、結果を画面に表示します。
+
+const と let の使い分け
+const: 書き換える必要のない要素（入力欄、ボタン、結果表示エリアなどのDOM要素）や、計算結果など一度代入したら変更しない変数に使用しました。
+
+let: 判定結果を格納する変数（judgement）のように、条件によって中身が変わる可能性があるものに使用しました。
+
+Number(...) による変換
+input.value で取得した値は、HTMLの仕様上「文字列」として扱われます。そのまま計算を行うと数値としての演算ができないため、Number() を使って数値型に変換することで、算術演算を可能にしました。
+
+詰まった場所と解決策
+身長をメートルに換算する計算（height / 100）をどのタイミングで行うか迷いました。当初は入力値そのものを変換しようとしましたが、入力欄の値を直接変えるのではなく、計算処理の中で一時変数（heightM）を作成して扱うことで、コードがスッキリし、元の入力値も保持できるためそのように実装しました。
+
+判断の記録
+選択肢A: エラーメッセージを「数値を入力してください」にする。
+
+選択肢B: エラーメッセージを「身長(cm)と体重(kg)に0より大きい数値を入力してください。」にする。
+
+採用した理由: 単に数値を求めるだけでなく、単位（cm/kg）や「0より大きい」という具体的な条件を提示することで、ユーザーがなぜ計算できなかったのかを即座に理解し、正しい入力を行えるようにするため。
+
+確認方法: 実際に「0」や「マイナス値」を入力してボタンを押し、指定したメッセージが表示されることをブラウザ上で確認しました。
+
+確認結果
+スマホ幅（375px）: レイアウト崩れなし。中央揃えで適切に表示。
+
+PC幅（1280px）: コンテナが中央に配置され、違和感なく表示。
+
+AI利用
+使ったAIツール: ChatGPT
+
+何を依頼したか: コードの構造レビューおよび、エラーハンドリングのベストプラクティスに関する相談。
+
+自分で修正した箇所: エラーメッセージの文言調整。
+
+AIとの比較
+AIが正しく実装できていたこと: 基本的なBMI計算式とDOM操作。
+
+AIが間違えた・足りなかったこと: ユーザーにとって分かりやすいエラーメッセージの具体的な提示。
+
+自分が修正・判断した箇所: よりユーザーフレンドリーなエラーメッセージへの変更と、変数名の分かりやすさの改善。
