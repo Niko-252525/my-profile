@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple TODO List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex justify-center p-4">
+
+    <div class="bg-white rounded-lg shadow p-6 w-full max-w-md">
+
+        <h1 class="text-2xl font-bold mb-4">
+            TODOリスト
+        </h1>
+
+        <div class="flex gap-2 mb-4">
+            <input id="todoInput" type="text" placeholder="タスクを入力..."
+                class="flex-1 border border-gray-300 rounded px-3 py-2">
+
+            <button id="addBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                追加
+            </button>
+        </div>
+
+        <ul id="todoList"></ul>
+
+    </div>
+
+    <script>
+        const todoInput = document.querySelector("#todoInput");
+        const addBtn = document.querySelector("#addBtn");
+        const todoList = document.querySelector("#todoList");
+
+        addBtn.addEventListener("click", () => {
+            const text = todoInput.value.trim();
+
+            if (text === "") {
+                return;
+            }
+
+            // liを作る
+            const item = document.createElement("li");
+            item.className =
+                "flex items-center justify-between bg-gray-50 border rounded p-2 mb-2";
+
+            // 左側（チェックボックス＋文字）
+            const left = document.createElement("div");
+            left.className = "flex items-center gap-2";
+
+            // チェックボックス
+            const checkBox = document.createElement("input");
+            checkBox.type = "checkbox";
+            checkBox.className = "w-5 h-5 accent-blue-500";
+
+            // タスク名
+            const span = document.createElement("span");
+            span.textContent = text;
+
+            // チェックすると取り消し線
+            checkBox.addEventListener("click", () => {
+                span.classList.toggle("line-through");
+                span.classList.toggle("text-gray-400");
+            });
+
+            // 左側に追加
+            left.appendChild(checkBox);
+            left.appendChild(span);
+
+            // 削除ボタン
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "削除";
+            deleteBtn.className =
+                "text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600";
+
+            deleteBtn.addEventListener("click", () => {
+                if (confirm("このタスクを削除しますか？")) {
+                    item.remove();
+                }
+            });
+
+            // liに追加
+            item.appendChild(left);
+            item.appendChild(deleteBtn);
+
+            // ulに追加
+            todoList.appendChild(item);
+
+            // 入力欄を空にする
+            todoInput.value = "";
+        });
+    </script>
+
+</body>
+
+</html>
