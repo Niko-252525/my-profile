@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHubユーザー情報</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-50 p-6">
+
+  <div class="mx-auto max-w-2xl">
+
+    <!-- ヘッダー -->
+    <header class="mb-6">
+      <h1 class="text-2xl font-bold text-slate-900">
+        GitHubユーザー情報
+      </h1>
+
+      <p class="mt-1 text-sm text-slate-600">
+        GitHubのユーザー名を入力するとプロフィール情報を表示します
+      </p>
+    </header>
+
+
+    <!-- 検索フォーム -->
+    <div class="flex flex-col gap-3 sm:flex-row">
+
+      <input
+        id="username"
+        type="text"
+        placeholder="GitHubユーザー名を入力"
+        class="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+
+      <button
+        id="searchButton"
+        class="rounded-lg bg-blue-500 px-5 py-3 font-bold text-white transition hover:bg-blue-600"
+      >
+        検索
+      </button>
+
+    </div>
+
+
+    <!-- ステータス -->
+    <p
+      id="status"
+      class="mt-4 text-sm text-slate-600"
+    ></p>
+
+
+    <!-- ユーザー情報 -->
+    <div
+      id="userCard"
+      class="mt-6 hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+    >
+
+      <div class="flex flex-col items-center gap-5 sm:flex-row">
+
+        <!-- アバター -->
+        <img
+          id="avatar"
+          src=""
+          alt="ユーザーアバター"
+          class="h-28 w-28 rounded-full"
+        >
+
+        <div class="text-center sm:text-left">
+
+          <!-- 名前 -->
+          <h2
+            id="name"
+            class="text-xl font-bold text-slate-900"
+          ></h2>
+
+          <!-- ユーザー名 -->
+          <p
+            id="login"
+            class="mt-1 text-sm text-slate-500"
+          ></p>
+
+          <!-- bio -->
+          <p
+            id="bio"
+            class="mt-3 text-sm text-slate-700"
+          ></p>
+
+        </div>
+
+      </div>
+
+
+      <!-- フォロワー・リポジトリ -->
+      <div class="mt-6 grid grid-cols-2 gap-3">
+
+        <div class="rounded-lg bg-slate-50 p-4 text-center">
+          <p class="text-sm text-slate-500">フォロワー</p>
+
+          <p
+            id="followers"
+            class="mt-1 text-xl font-bold text-slate-900"
+          ></p>
+        </div>
+
+
+        <div class="rounded-lg bg-slate-50 p-4 text-center">
+          <p class="text-sm text-slate-500">公開リポジトリ</p>
+
+          <p
+            id="repos"
+            class="mt-1 text-xl font-bold text-slate-900"
+          ></p>
+        </div>
+
+      </div>
+
+
+      <!-- GitHubプロフィール -->
+      <a
+        id="profileLink"
+        href="#"
+        target="_blank"
+        class="mt-6 block rounded-lg bg-slate-900 px-4 py-3 text-center font-bold text-white transition hover:bg-slate-700"
+      >
+        GitHubプロフィールを見る
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const usernameInput = document.getElementById("username");
+    const searchButton = document.getElementById("searchButton");
+
+    const status = document.getElementById("status");
+    const userCard = document.getElementById("userCard");
+
+    const avatar = document.getElementById("avatar");
+    const name = document.getElementById("name");
+    const login = document.getElementById("login");
+    const bio = document.getElementById("bio");
+    const followers = document.getElementById("followers");
+    const repos = document.getElementById("repos");
+    const profileLink = document.getElementById("profileLink");
+
+
+    async function getGitHubUser() {
+
+      const username = usernameInput.value.trim();
+
+      // 入力されていない場合
+      if (username === "") {
+        status.textContent = "ユーザー名を入力してください";
+        status.classList.remove("text-green-600", "text-slate-600");
+        status.classList.add("text-red-500");
+
+        userCard.classList.add("hidden");
+
+        return;
+      }
+
+
+      try {
+
+        // ローディング表示
+        status.textContent = "読み込み中...";
+        status.classList.remove("text-red-500");
+        status.classList.add("text-slate-600");
+
+        userCard.classList.add("hidden");
+
+
+        // GitHub APIにリクエスト
+        const response = await fetch(
+          `https://api.github.com/users/${username}`
+        );
+
+
+        // 通信が成功したか確認
+        if (!response.ok) {
+
+          status.textContent = "ユーザーが見つかりませんでした";
+
+          status.classList.remove("text-slate-600");
+          status.classList.add("text-red-500");
+
+          return;
+        }
+
+
+        // JSONに変換
+        const user = await response.json();
+
+
+        // Consoleで取得データを確認
+        console.log(user);
+
+
+        // 取得したデータを画面に表示
+        avatar.src = user.avatar_url;
+        name.textContent = user.name || "名前未設定";
+        login.textContent = `@${user.login}`;
+        bio.textContent = user.bio || "自己紹介はありません";
+        followers.textContent = user.followers;
+        repos.textContent = user.public_repos;
+
+        profileLink.href = user.html_url;
+
+
+        // カードを表示
+        userCard.classList.remove("hidden");
+
+        // ステータスを消す
+        status.textContent = "";
+
+      } catch (error) {
+
+        console.error(error);
+
+        status.textContent = "取得に失敗しました";
+
+        status.classList.remove("text-slate-600");
+        status.classList.add("text-red-500");
+
+        userCard.classList.add("hidden");
+      }
+    }
+
+
+    // ボタンを押したら検索
+    searchButton.addEventListener("click", getGitHubUser);
+
+
+    // Enterキーでも検索できるようにする
+    usernameInput.addEventListener("keydown", (event) => {
+
+      if (event.key === "Enter") {
+        getGitHubUser();
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
+
+## 実装内容
+
+### 1. fetch / async/await / try/catchについて
+
+GitHub APIからユーザー情報を取得するために、`async`関数の中で`fetch()`を使用しました。
+
+- `fetch()`で入力されたユーザー名を使ってGitHub APIにリクエストしました。
+- `await response.json()`で取得したJSONデータをJavaScriptで扱えるオブジェクトに変換しました。
+- `try/catch`を使い、通信に失敗した場合にエラーメッセージを表示するようにしました。
+- `console.log(user)`を使って取得したデータをConsoleで確認し、`avatar_url`、`name`、`bio`、`followers`などのプロパティを使用しました。
+
+### 2. response.okの確認と存在しないユーザーの分岐
+
+`response.ok`を使ってAPI通信が成功したか確認しました。
+
+`response.ok`が`false`の場合は、ユーザーが存在しないと判断して「ユーザーが見つかりませんでした」と表示するようにしました。
+
+```js
+if (!response.ok) {
+  status.textContent = "ユーザーが見つかりませんでした";
+  return;
+}
+3. 詰まった場所と解決方法
+
+GitHub APIから取得したデータのどのプロパティを使えばよいか確認するところで少し迷いました。
+
+DevToolsのConsoleでconsole.log(user)を実行して取得したデータを確認し、avatar_urlはアバター画像、nameは名前、bioは自己紹介、followersはフォロワー数として使用できることを確認しました。
+判断の記録
+
+今週の実装では、ユーザーが見つからなかった場合の表示方法について判断しました。
+
+選択肢A：エラーメッセージだけ表示する
+選択肢B：エラーメッセージを表示し、前回表示していたユーザー情報も非表示にする
+採用した理由：前回のユーザー情報が残っていると、検索に失敗したことが分かりにくくなるため、ユーザーカードも非表示にすることにしました。
+確認方法：一度存在するユーザーを検索した後、存在しないユーザー名を検索し、ユーザー情報が非表示になってエラーメッセージが表示されることを確認しました。
+AI利用
+使ったAIツール：ChatGPT
+何を依頼したか：GitHub APIを使ったユーザー情報表示ツールの実装方法とコード例を依頼しました。
+自分で修正した箇所：ConsoleでAPIから取得したデータを確認し、使用するプロパティを確認しました。また、スマホ幅とPC幅で表示を確認しました。
+AIとの比較
+AIが正しく実装できていたこと：
+fetch()、async/await、try/catch、response.okを使ったAPI通信とエラー処理が正しく実装されていました。また、アバター、名前、bio、フォロワー数などの表示も要件を満たしていました。
+AIが間違えた・足りなかったこと：
+今回生成されたコードには、特に大きな間違いはありませんでした。
+自分が修正・判断した箇所：
+AIが提示したコードをそのまま使うのではなく、Consoleで実際のAPIレスポンスを確認して使用するプロパティを判断しました。また、スマホ幅（375px）とPC幅（1280px）で表示を確認しました。
